@@ -1,0 +1,5 @@
+argostranslate
+argostranslategui
+pytorch
+transformers datasets
+datasets
