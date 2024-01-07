@@ -7,4 +7,5 @@ huggingface_hub
 langchain
 sentence_transformers
 accelerate
+pytest
 #-U langchain-community
