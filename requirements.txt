@@ -1,5 +1,6 @@
 argostranslate
 argostranslategui
-pytorch
-transformers datasets
+torch
+transformers
 datasets
+huggingface_hub
