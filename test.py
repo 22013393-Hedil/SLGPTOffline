@@ -1,21 +1,29 @@
-import argostranslate.package as ap
-import argostranslate.translate as at
+#from langchain.chains import LLMChain
+import torch
+from transformers import AutoTokenizer, pipeline, AutoModelForSeq2SeqLM
 
-from_code = 'en'
-to_code = 'zh'
-# Download and install Argos Translate package
-def translateText(from_code:str, to_code:str, TexttoTranslate:str)->str:
-    ap.update_package_index()
-    available_packages = ap.get_available_packages()
-    package_to_install = next(
-        filter(
-            lambda x: x.from_code == from_code and x.to_code == to_code, available_packages
-        )
+model_id = 'google/flan-t5-small'
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForSeq2SeqLM.from_pretrained(
+    model_id,
+    load_in_8bit=True,
+    low_cpu_mem_usage=True,
+    framework='pt',
+    device=torch.device('cpu'),
+    device_map='auto'
     )
-    ap.install_from_path(package_to_install.download())
-    # Translate
-    translatingText = at.translate(TexttoTranslate, from_code, to_code)
-    return translatingText
 
-translateTxt:str = input('enter: ')
-print(translateText(from_code, to_code, translateTxt))
+generate = pipeline(
+    'text2text-generation',
+    model=model,
+    tokenizer=tokenizer,
+    max_length=100
+)
+
+#local_llm = HuggingFacePipeline(pipeline=pipeline)
+
+#llm_chain = LLMChain(prompt='translate from english to french: ',llm=local_llm)
+
+question = 'What is the meaning of life?'
+
+print(generate(question, max_length=100)[0]['generated_text'])

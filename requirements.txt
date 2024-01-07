@@ -4,3 +4,7 @@ torch
 transformers
 datasets
 huggingface_hub
+langchain
+sentence_transformers
+accelerate
+#-U langchain-community
