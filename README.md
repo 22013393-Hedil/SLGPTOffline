@@ -4,5 +4,4 @@ The aim of this project is to produce a working ChatGPT response in prompt comma
 We are going through the step-by-step installments and codings that would help proceed to offline, due to the setting in github to be a virtual environment.
 
 # Installation:
-'''python
-'''
+### 1.
