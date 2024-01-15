@@ -16,5 +16,9 @@ pip install -r requirements.txt
     - [indo-pure Model](https://huggingface.co/CLAck/indo-pure/tree/main)
     - [BART-base](https://huggingface.co/facebook/bart-base) (Noted: Supports translation)
     - [flan-t5-small](https://huggingface.co/google/flan-t5-small) (Note: Supports translation)
+** Take note that translation need certain tokens, if noted that it supports. Please read its description
 
-3. 
+3. Ensure you add in the model either using pipeline function or from_pretrained function
+   ```python
+    pip install -r requirements.txt
+    ```
