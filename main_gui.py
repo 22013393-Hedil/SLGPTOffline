@@ -1,5 +1,27 @@
 import customtkinter as ctk
-import os
+from transformers import pipeline
+
+gpt2_model = pipeline('text-generation', model='openai-community/gpt2-medium')
+
+def generate_response(user_input):
+    # Use the GPT-2 model to generate a response
+    response = gpt2_model(user_input, max_length=100, num_return_sequences=1)[0]['generated_text']
+    return response
+
+def update_display_box():
+    text_to_display = nameEntry.get()
+    
+    # Append user input to displayBox
+    displayBox.insert(ctk.END, f"User: {text_to_display}\n")
+    print(f"User: {text_to_display}\n")
+    
+    # Generate and append GPT-2 response to displayBox
+    gpt2_response = generate_response(text_to_display)
+    displayBox.insert(ctk.END, f"GPT-2: {gpt2_response}\n")
+    print(f"GPT-2: {gpt2_response}\n")
+    
+    # Clear the entry field after sending
+    nameEntry.delete(0, ctk.END)
 
 def generate():
     print('generated')
@@ -7,14 +29,45 @@ def generate():
 def change_appearance_mode(mode):
     ctk.set_appearance_mode(mode)
 
-def update_display_box():
-    text_to_display = nameEntry.get()
-    displayBox.insert(ctk.END, f"User: {text_to_display}\n")  # Append new content with newline
-    nameEntry.delete(0, ctk.END)  # Clear the entry field after sending
-
 def switch_event():
     appearance_mode = switch_var.get()
     change_appearance_mode(appearance_mode)
+
+def create_settings_game_frame(parent):
+    frame = ctk.CTkFrame(parent)
+    frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+    # Appearance mode switch
+    switch = ctk.CTkSwitch(
+        frame, text="Dark Mode", command=switch_event,
+        variable=switch_var, onvalue="dark", offvalue="light"
+    )
+    switch.grid(row=0, column=0, pady=5, sticky="w")
+
+    # Language mode radio buttons
+    Language_mode_English = ctk.CTkRadioButton(
+        frame, value="English", variable=Language_mode, text="English"
+    )
+    Language_mode_English.grid(row=1, column=0, padx=(20, 10), pady=5, sticky="w")
+    Language_mode_Indo = ctk.CTkRadioButton(
+        frame, value="Indo", variable=Language_mode, text="Bahasa Indonesia"
+    )
+    Language_mode_Indo.grid(row=2, column=0, padx=(20, 10), pady=5, sticky="w")
+
+    # Game-mode UI
+    features_label = ctk.CTkLabel(
+        frame, text='Game-Mode Settings', font=ctk.CTkFont(weight='bold')
+    )
+    features_label.grid(row=3, column=0, pady=(10, 5), sticky="w")
+    checkboxes = [
+        ctk.CTkCheckBox(frame, text='Fantasy Mode'),
+        ctk.CTkCheckBox(frame, text='Future Mode'),
+        ctk.CTkCheckBox(frame, text='Prehistoric Mode')
+    ]
+    for idx, checkbox in enumerate(checkboxes):
+        checkbox.grid(row=idx + 4, column=0, pady=5, sticky="w")
+
+    return frame
 
 root = ctk.CTk()  # Initializing
 root.geometry("750x550")  # Size of tab
@@ -42,37 +95,7 @@ left_frame.grid_rowconfigure(0, weight=1)
 left_frame.grid_rowconfigure(1, weight=1)
 
 # Settings and Game-mode UI
-settings_game_frame = ctk.CTkFrame(left_frame)
-settings_game_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-
-# Appearance mode switch
-switch = ctk.CTkSwitch(
-    settings_game_frame, text="Dark Mode", command=switch_event,
-    variable=switch_var, onvalue="dark", offvalue="light"
-)
-switch.grid(row=0, column=0, pady=5, sticky="w")
-
-# Language mode radio buttons
-Language_mode_English = ctk.CTkRadioButton(
-    settings_game_frame, value="English", variable=Language_mode, text="English"
-)
-Language_mode_English.grid(row=1, column=0, padx=(20, 10), pady=5, sticky="w")
-Language_mode_Indo = ctk.CTkRadioButton(
-    settings_game_frame, value="Indo", variable=Language_mode, text="Bahasa Indonesia"
-)
-Language_mode_Indo.grid(row=2, column=0, padx=(20, 10), pady=5, sticky="w")
-
-# Game-mode UI
-features_label = ctk.CTkLabel(
-    settings_game_frame, text='Game-Mode Settings', font=ctk.CTkFont(weight='bold')
-)
-features_label.grid(row=3, column=0, pady=(10, 5), sticky="w")
-checkbox1 = ctk.CTkCheckBox(settings_game_frame, text='Fantasy Mode')
-checkbox1.grid(row=4, column=0, pady=5, sticky="w")
-checkbox2 = ctk.CTkCheckBox(settings_game_frame, text='Future Mode')
-checkbox2.grid(row=5, column=0, pady=5, sticky="w")
-checkbox3 = ctk.CTkCheckBox(settings_game_frame, text='Prehistoric Mode')
-checkbox3.grid(row=6, column=0, pady=5, sticky="w")
+settings_game_frame = create_settings_game_frame(left_frame)
 
 # Right half: ChatGPT UI
 # Text Box
