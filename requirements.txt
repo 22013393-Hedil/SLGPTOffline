@@ -7,5 +7,6 @@ huggingface_hub
 langchain
 sentence_transformers
 accelerate
+huggingface-hub
 customtkinter
 #-U langchain-community
